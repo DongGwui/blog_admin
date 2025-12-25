@@ -39,8 +39,11 @@ export function PostEditorPage({
   const { showToast } = useToast();
   const createPostMutation = useCreatePost();
   const updatePostMutation = useUpdatePost();
-  const { isSettingsPanelOpen, toggleSettingsPanel, closeSettingsPanel } =
-    usePostEditorLayout();
+  const {
+    isSettingsPanelOpen,
+    toggleSettingsPanel,
+    closeSettingsPanel,
+  } = usePostEditorLayout();
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -183,13 +186,37 @@ export function PostEditorPage({
     }
   };
 
-  const handleSaveDraft = () => handleSubmit('draft');
-  const handlePublish = () => handleSubmit('published');
+  const handleSaveDraft = useCallback(() => handleSubmit('draft'), [handleSubmit]);
+  const handlePublish = useCallback(() => handleSubmit('published'), [handleSubmit]);
 
   const isSaving = createPostMutation.isPending || updatePostMutation.isPending;
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + S: Save draft
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (!isSaving) handleSaveDraft();
+      }
+      // Ctrl/Cmd + Enter: Publish
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (!isSaving) handlePublish();
+      }
+      // Escape: Close settings panel
+      if (e.key === 'Escape' && isSettingsPanelOpen) {
+        e.preventDefault();
+        closeSettingsPanel();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSaveDraft, handlePublish, isSaving, isSettingsPanelOpen, closeSettingsPanel]);
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <PostEditorHeader
         title={post ? '글 수정' : '새 글 작성'}
@@ -202,7 +229,7 @@ export function PostEditorPage({
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 min-h-0 overflow-hidden">
         <PostContentEditor
           title={formData.title}
           content={formData.content}

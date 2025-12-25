@@ -22,6 +22,14 @@ vi.mock('@/presentation/components/editor/MarkdownEditor', () => ({
   ),
 }));
 
+// Mock useEditorHeight hook
+vi.mock('@/presentation/hooks/useEditorHeight', () => ({
+  useEditorHeight: () => ({
+    editorHeight: 500,
+    containerRef: vi.fn(),
+  }),
+}));
+
 describe('PostContentEditor', () => {
   const defaultProps = {
     title: '',
@@ -60,7 +68,8 @@ describe('PostContentEditor', () => {
       render(<PostContentEditor {...defaultProps} />);
 
       const titleInput = screen.getByPlaceholderText(/제목/i);
-      expect(titleInput).toHaveClass('text-3xl');
+      // Responsive classes: text-2xl on mobile, sm:text-3xl on larger screens
+      expect(titleInput).toHaveClass('text-2xl');
     });
   });
 

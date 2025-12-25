@@ -11,7 +11,7 @@ import { ImageInsertModal } from '@/presentation/components/media/ImageInsertMod
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
   ssr: false,
   loading: () => (
-    <div className="h-[500px] border rounded-lg flex items-center justify-center bg-gray-50">
+    <div className="h-full min-h-[300px] flex items-center justify-center">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
     </div>
   ),
@@ -24,7 +24,7 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  height?: number;
+  height?: number | string;
   onImageUpload?: (file: File) => Promise<string>;
 }
 
@@ -159,13 +159,14 @@ export function MarkdownEditor({
   }, [imageCommand]);
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       {/* Editor Area */}
       <div
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onPaste={handlePaste}
         data-color-mode="light"
+        className="h-full"
       >
         {isUploading && (
           <div className="absolute inset-0 bg-white/70 z-10 flex items-center justify-center">
@@ -184,6 +185,7 @@ export function MarkdownEditor({
           textareaProps={{
             placeholder,
           }}
+          visibleDragbar={false}
         />
       </div>
 

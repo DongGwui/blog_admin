@@ -24,3 +24,27 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* MDEditor border and separator removal */
+.w-md-editor {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.w-md-editor-toolbar {
+  border-bottom: none !important;
+  background-color: transparent !important;
+}
+
+.w-md-editor-content {
+  border-top: none !important;
+}
+
+.w-md-editor-preview {
+  border-left: none !important;
+}
+
+/* Remove the resize handle border */
+.w-md-editor-bar {
+  border-top: none !important;
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { MarkdownEditor } from '@/presentation/components/editor/MarkdownEditor';
+import { useEditorHeight } from '@/presentation/hooks/useEditorHeight';
 
 interface PostContentEditorProps {
   title: string;
@@ -8,7 +9,6 @@ interface PostContentEditorProps {
   onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
   onImageUpload?: (file: File) => Promise<string>;
-  editorHeight?: number;
 }
 
 export function PostContentEditor({
@@ -17,26 +17,31 @@ export function PostContentEditor({
   onTitleChange,
   onContentChange,
   onImageUpload,
-  editorHeight,
 }: PostContentEditorProps) {
+  const { editorHeight, containerRef } = useEditorHeight({
+    headerHeight: 57,
+    titleAreaHeight: 73,
+    padding: 16,
+  });
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Title Input */}
-      <div className="px-6 py-4">
+      <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pt-4 pb-2">
         <input
           type="text"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="제목을 입력하세요"
-          className="w-full text-3xl font-bold text-gray-900 placeholder-gray-400 border-0 outline-none focus:ring-0"
+          className="w-full text-2xl sm:text-3xl font-bold text-gray-900 placeholder-gray-400 border-0 outline-none focus:ring-0 bg-transparent"
         />
       </div>
 
-      {/* Separator */}
-      <hr className="mx-6 border-gray-200" />
-
-      {/* Content Editor */}
-      <div className="flex-1 px-6 py-4">
+      {/* Content Editor - fills remaining space */}
+      <div
+        ref={containerRef}
+        className="flex-1 min-h-0 px-4 sm:px-6 lg:px-8 py-2"
+      >
         <MarkdownEditor
           value={content}
           onChange={onContentChange}
