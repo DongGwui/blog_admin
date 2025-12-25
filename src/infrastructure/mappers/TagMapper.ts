@@ -39,7 +39,7 @@ export class TagMapper {
   }
 
   static toDomainList(apiResponse: TagListApiResponse): Tag[] {
-    return apiResponse.data.map(TagMapper.toDomain);
+    return (apiResponse.data || []).map(TagMapper.toDomain);
   }
 
   static toCreateApiRequest(data: CreateTagData): CreateTagApiRequest {

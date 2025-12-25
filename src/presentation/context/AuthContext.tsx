@@ -35,9 +35,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshUser = useCallback(async () => {
     try {
+      console.log('[Auth] Fetching current user...');
       const currentUser = await getCurrentUserUseCase.execute();
+      console.log('[Auth] Current user fetched:', currentUser);
       setUser(currentUser);
-    } catch {
+    } catch (error) {
+      console.error('[Auth] Failed to fetch user:', error);
       setUser(null);
     }
   }, [getCurrentUserUseCase]);
@@ -56,9 +59,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useCallback(
     async (username: string, password: string) => {
       await loginUseCase.execute({ username, password });
-      await refreshUser();
+      const currentUser = await getCurrentUserUseCase.execute();
+      if (!currentUser) {
+        throw new Error('유저 정보를 가져올 수 없습니다');
+      }
+      setUser(currentUser);
     },
-    [loginUseCase, refreshUser]
+    [loginUseCase, getCurrentUserUseCase]
   );
 
   const logout = useCallback(async () => {

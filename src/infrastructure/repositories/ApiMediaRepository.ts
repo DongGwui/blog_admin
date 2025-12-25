@@ -36,7 +36,7 @@ export class ApiMediaRepository implements IMediaRepository {
   }
 
   async upload(file: File): Promise<Media> {
-    const response = await this.apiClient.uploadFile<SingleMediaApiResponse>('/media', file);
+    const response = await this.apiClient.uploadFile<SingleMediaApiResponse>('/media/upload', file);
     return MediaMapper.toDomain(response.data);
   }
 

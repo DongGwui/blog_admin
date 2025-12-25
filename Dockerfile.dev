@@ -12,6 +12,6 @@ COPY . .
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
-EXPOSE 3001
+EXPOSE ${PORT:-3000}
 
 CMD ["npm", "run", "dev"]

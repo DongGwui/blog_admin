@@ -44,10 +44,10 @@ export class MediaMapper {
 
   static toDomainList(response: MediaListApiResponse): GetMediaResult {
     return {
-      media: response.data.map(this.toDomain),
-      total: response.meta.total,
-      page: response.meta.page,
-      totalPages: response.meta.total_pages,
+      media: (response.data || []).map(this.toDomain),
+      total: response.meta?.total ?? 0,
+      page: response.meta?.page ?? 1,
+      totalPages: response.meta?.total_pages ?? 0,
     };
   }
 }

@@ -4,15 +4,18 @@ import { ApiClient } from '../api/ApiClient';
 import { TokenStorage } from '../auth/TokenStorage';
 
 interface ApiLoginResponse {
-  token: string;
-  expires_at: string;
+  data: {
+    token: string;
+    expires_at: string;
+  };
 }
 
 interface ApiUserResponse {
   id: number;
   username: string;
-  email: string;
-  role: string;
+  email?: string;
+  role?: string;
+  created_at?: string;
 }
 
 export class ApiAuthRepository implements IAuthRepository {
@@ -27,11 +30,12 @@ export class ApiAuthRepository implements IAuthRepository {
       password: credentials.password,
     });
 
-    this.tokenStorage.setToken(response.token);
+    const { token, expires_at } = response.data;
+    this.tokenStorage.setToken(token);
 
     return {
-      accessToken: response.token,
-      expiresAt: new Date(response.expires_at),
+      accessToken: token,
+      expiresAt: new Date(expires_at),
     };
   }
 
@@ -49,8 +53,8 @@ export class ApiAuthRepository implements IAuthRepository {
       return {
         id: response.id,
         username: response.username,
-        email: response.email,
-        role: response.role as 'admin' | 'editor',
+        email: response.email || '',
+        role: (response.role as 'admin' | 'editor') || 'admin',
       };
     } catch {
       return null;

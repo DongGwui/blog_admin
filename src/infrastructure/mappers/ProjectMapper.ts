@@ -47,7 +47,7 @@ export interface UpdateProjectApiRequest {
 }
 
 export interface ReorderProjectsApiRequest {
-  ids: number[];
+  orders: Array<{ id: number; sort_order: number }>;
 }
 
 export class ProjectMapper {
@@ -69,7 +69,7 @@ export class ProjectMapper {
   }
 
   static toDomainList(response: ProjectListApiResponse): Project[] {
-    return response.data.map(this.toDomain);
+    return (response.data || []).map(this.toDomain);
   }
 
   static toCreateApiRequest(data: CreateProjectData): CreateProjectApiRequest {

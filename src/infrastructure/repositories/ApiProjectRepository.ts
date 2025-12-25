@@ -44,8 +44,10 @@ export class ApiProjectRepository implements IProjectRepository {
     await this.apiClient.delete(`/projects/${id}`);
   }
 
-  async reorder(ids: number[]): Promise<void> {
-    const requestData: ReorderProjectsApiRequest = { ids };
+  async reorder(orders: Array<{ id: number; sortOrder: number }>): Promise<void> {
+    const requestData: ReorderProjectsApiRequest = {
+      orders: orders.map(o => ({ id: o.id, sort_order: o.sortOrder })),
+    };
     await this.apiClient.patch('/projects/reorder', requestData);
   }
 }

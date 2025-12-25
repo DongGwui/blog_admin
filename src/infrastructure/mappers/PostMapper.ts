@@ -92,10 +92,10 @@ export class PostMapper {
     totalPages: number;
   } {
     return {
-      posts: apiResponse.data.map(PostMapper.toDomain),
-      total: apiResponse.meta.total,
-      page: apiResponse.meta.page,
-      totalPages: apiResponse.meta.total_pages,
+      posts: (apiResponse.data || []).map(PostMapper.toDomain),
+      total: apiResponse.meta?.total ?? 0,
+      page: apiResponse.meta?.page ?? 1,
+      totalPages: apiResponse.meta?.total_pages ?? 0,
     };
   }
 

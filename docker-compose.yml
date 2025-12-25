@@ -22,13 +22,14 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3001:3001"
+      - "${PORT:-3000}:${PORT:-3000}"
     volumes:
       - .:/app
       - /app/node_modules
       - /app/.next
     environment:
       - NODE_ENV=development
+      - PORT=${PORT:-3000}
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
     profiles:
       - dev

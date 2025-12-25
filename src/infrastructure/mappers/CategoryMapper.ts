@@ -48,7 +48,7 @@ export class CategoryMapper {
   }
 
   static toDomainList(apiResponse: CategoryListApiResponse): Category[] {
-    return apiResponse.data.map(CategoryMapper.toDomain);
+    return (apiResponse.data || []).map(CategoryMapper.toDomain);
   }
 
   static toCreateApiRequest(data: CreateCategoryData): CreateCategoryApiRequest {

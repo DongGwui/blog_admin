@@ -28,5 +28,5 @@ export interface IProjectRepository {
   create(data: CreateProjectData): Promise<Project>;
   update(id: number, data: UpdateProjectData): Promise<Project>;
   delete(id: number): Promise<void>;
-  reorder(ids: number[]): Promise<void>;
+  reorder(orders: Array<{ id: number; sortOrder: number }>): Promise<void>;
 }
