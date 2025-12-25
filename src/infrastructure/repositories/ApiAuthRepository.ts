@@ -64,11 +64,12 @@ export class ApiAuthRepository implements IAuthRepository {
   async refreshToken(): Promise<AuthToken> {
     const response = await this.api.post<ApiLoginResponse>('/auth/refresh');
 
-    this.tokenStorage.setToken(response.token);
+    const { token, expires_at } = response.data;
+    this.tokenStorage.setToken(token);
 
     return {
-      accessToken: response.token,
-      expiresAt: new Date(response.expires_at),
+      accessToken: token,
+      expiresAt: new Date(expires_at),
     };
   }
 }

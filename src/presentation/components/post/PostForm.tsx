@@ -7,6 +7,7 @@ import { CreatePostData, UpdatePostData } from '@/domain/repositories/IPostRepos
 import { Button } from '@/presentation/components/common/Button';
 import { Input } from '@/presentation/components/common/Input';
 import { MarkdownEditor } from '@/presentation/components/editor/MarkdownEditor';
+import { ThumbnailPicker } from '@/presentation/components/post/ThumbnailPicker';
 import { useToast } from '@/presentation/components/common/Toast';
 import { useCreatePost, useUpdatePost } from '@/presentation/hooks/queries/usePostQueries';
 
@@ -209,11 +210,9 @@ export function PostForm({ post, categories = [], tags = [], onImageUpload }: Po
 
       {/* Thumbnail */}
       <div>
-        <Input
-          label="썸네일 URL"
+        <ThumbnailPicker
           value={formData.thumbnail}
-          onChange={(e) => handleInputChange('thumbnail', e.target.value)}
-          placeholder="https://example.com/image.jpg"
+          onChange={(url) => handleInputChange('thumbnail', url)}
         />
       </div>
 

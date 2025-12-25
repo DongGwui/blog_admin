@@ -67,7 +67,8 @@ export function useReorderProjects() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (ids: number[]) => reorderProjectsUseCase.execute(ids),
+    mutationFn: (orders: { id: number; sortOrder: number }[]) =>
+      reorderProjectsUseCase.execute(orders),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROJECT_QUERY_KEY] });
     },

@@ -58,8 +58,11 @@ export function ProjectList() {
 
       setDraggedId(null);
 
+      // Transform to { id, sortOrder } format
+      const orders = newOrder.map((id, index) => ({ id, sortOrder: index }));
+
       try {
-        await reorderProjects.mutateAsync(newOrder);
+        await reorderProjects.mutateAsync(orders);
       } catch (error) {
         console.error('Reorder failed:', error);
       }
