@@ -1,16 +1,11 @@
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+RUN npm ci
 
-# Stage 2: Builder
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build arguments for NEXT_PUBLIC_* variables (required at build time)
@@ -21,10 +16,9 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-RUN npm ci
 RUN npm run build
 
-# Stage 3: Runner
+# Stage 2: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 

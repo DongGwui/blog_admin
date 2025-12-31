@@ -3,11 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api/admin}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/login"]
@@ -21,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api/admin}
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     volumes:
@@ -30,6 +33,5 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=${PORT:-3000}
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
     profiles:
       - dev
