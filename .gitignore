@@ -50,3 +50,6 @@ next-env.d.ts
 # IDE
 .idea
 .vscode
+
+# docker 홈 서버
+docker-compose.yml
