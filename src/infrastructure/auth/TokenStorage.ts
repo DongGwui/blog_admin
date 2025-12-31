@@ -15,10 +15,17 @@ export class TokenStorage {
     if (typeof window === 'undefined') {
       return;
     }
+    // HTTPS 환경에서만 secure 쿠키 사용
+    // 내부망 HTTP 환경에서는 NEXT_PUBLIC_COOKIE_SECURE=false 설정
+    const isSecure = process.env.NEXT_PUBLIC_COOKIE_SECURE !== 'false'
+      && process.env.NODE_ENV === 'production'
+      && typeof window !== 'undefined'
+      && window.location.protocol === 'https:';
+
     Cookies.set(TOKEN_KEY, token, {
       expires: TOKEN_EXPIRY_DAYS,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: isSecure ? 'strict' : 'lax',
+      secure: isSecure,
     });
   }
 
