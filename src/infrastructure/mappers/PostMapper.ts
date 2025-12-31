@@ -1,6 +1,13 @@
 import { Post, PostStatus } from '@/domain/entities/Post';
 import { CreatePostData, UpdatePostData } from '@/domain/repositories/IPostRepository';
 
+// Tag in post response
+export interface TagBriefInPost {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 // API Response DTOs (snake_case from backend)
 export interface PostApiResponse {
   id: number;
@@ -11,8 +18,11 @@ export interface PostApiResponse {
   thumbnail: string | null;
   status: string;
   category_id: number | null;
-  tag_ids: number[];
+  category_name?: string;
+  category_slug?: string;
+  tags: TagBriefInPost[];
   view_count: number;
+  reading_time?: number;
   created_at: string;
   updated_at: string;
   published_at?: string | null;
@@ -67,18 +77,21 @@ function calculateReadingTime(content: string): number {
 
 export class PostMapper {
   static toDomain(apiResponse: PostApiResponse): Post {
+    // Extract tag IDs from tags array
+    const tagIds = (apiResponse.tags || []).map((tag) => tag.id);
+
     return {
       id: apiResponse.id,
       title: apiResponse.title,
       slug: apiResponse.slug,
-      content: apiResponse.content,
-      excerpt: apiResponse.excerpt,
+      content: apiResponse.content || '',
+      excerpt: apiResponse.excerpt || '',
       status: apiResponse.status as PostStatus,
       categoryId: apiResponse.category_id,
-      tagIds: apiResponse.tag_ids || [],
+      tagIds,
       thumbnail: apiResponse.thumbnail,
       viewCount: apiResponse.view_count,
-      readingTime: calculateReadingTime(apiResponse.content),
+      readingTime: apiResponse.reading_time || calculateReadingTime(apiResponse.content || ''),
       createdAt: new Date(apiResponse.created_at),
       updatedAt: new Date(apiResponse.updated_at),
       publishedAt: apiResponse.published_at ? new Date(apiResponse.published_at) : null,

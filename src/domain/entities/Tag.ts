@@ -3,6 +3,7 @@ export interface Tag {
   name: string;
   slug: string;
   postCount: number;
+  createdAt: Date;
 }
 
 export interface CreateTagParams {
@@ -24,5 +25,6 @@ export function createTag(params: CreateTagParams): Tag {
     name: params.name,
     slug: generateSlug(params.name),
     postCount: 0,
+    createdAt: new Date(),
   };
 }

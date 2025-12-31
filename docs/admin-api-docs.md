@@ -1,6 +1,6 @@
 # Blog Admin API 명세서
 
-**Base URL:** `https://blog-api.dltmxm.link/api`  
+**Base URL:** `https://blog-api.dltmxm.link/api`
 **Version:** 1.0
 
 ---
@@ -28,11 +28,13 @@ Authorization: Bearer <token>
 }
 ```
 
-**Response (200):**
+**Response (201):**
 ```json
 {
-  "token": "eyJhbGc...",
-  "expires_at": "2025-01-01T00:00:00Z"
+  "data": {
+    "token": "eyJhbGc...",
+    "expires_at": "2025-01-01T00:00:00Z"
+  }
 }
 ```
 
@@ -58,9 +60,11 @@ Authorization: Bearer <token>
 **Response (200):**
 ```json
 {
-  "id": 1,
-  "username": "admin",
-  "created_at": "2025-01-01T00:00:00Z"
+  "data": {
+    "id": 1,
+    "username": "admin",
+    "created_at": "2025-01-01T00:00:00Z"
+  }
 }
 ```
 
@@ -77,10 +81,30 @@ Authorization: Bearer <token>
 ```json
 {
   "data": {
-    "total_posts": 10,
-    "total_views": 1000,
-    "total_categories": 5,
-    "total_tags": 20
+    "posts": {
+      "total": 10,
+      "published": 8,
+      "draft": 2
+    },
+    "categories": [
+      {
+        "id": 1,
+        "name": "개발",
+        "slug": "dev",
+        "post_count": 5
+      }
+    ],
+    "recent_posts": [
+      {
+        "id": 1,
+        "title": "최근 글",
+        "slug": "recent-post",
+        "status": "published",
+        "view_count": 100,
+        "created_at": "2025-01-01T00:00:00Z",
+        "published_at": "2025-01-01T00:00:00Z"
+      }
+    ]
   }
 }
 ```
@@ -102,7 +126,26 @@ Authorization: Bearer <token>
 **Response (200):**
 ```json
 {
-  "data": [...],
+  "data": [
+    {
+      "id": 1,
+      "title": "글 제목",
+      "slug": "post-slug",
+      "excerpt": "발췌문",
+      "category_id": 1,
+      "category_name": "개발",
+      "category_slug": "dev",
+      "status": "published",
+      "view_count": 100,
+      "reading_time": 5,
+      "thumbnail": "https://...",
+      "tags": [
+        { "id": 1, "name": "Go", "slug": "go" }
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "published_at": "2025-01-01T00:00:00Z"
+    }
+  ],
   "meta": {
     "page": 1,
     "per_page": 10,
@@ -127,17 +170,23 @@ Authorization: Bearer <token>
 {
   "data": {
     "id": 1,
-    "title": "...",
-    "slug": "...",
-    "content": "...",
-    "excerpt": "...",
-    "thumbnail": "...",
+    "title": "글 제목",
+    "slug": "post-slug",
+    "content": "글 내용 (마크다운)",
+    "excerpt": "발췌문",
+    "thumbnail": "https://...",
     "status": "published",
     "category_id": 1,
-    "tag_ids": [1, 2, 3],
+    "category_name": "개발",
+    "category_slug": "dev",
+    "tags": [
+      { "id": 1, "name": "Go", "slug": "go" }
+    ],
     "view_count": 100,
-    "created_at": "...",
-    "updated_at": "..."
+    "reading_time": 5,
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z",
+    "published_at": "2025-01-01T00:00:00Z"
   }
 }
 ```
@@ -239,9 +288,10 @@ Authorization: Bearer <token>
       "id": 1,
       "name": "개발",
       "slug": "dev",
-      "description": "...",
+      "description": "개발 관련 글",
       "sort_order": 1,
-      "post_count": 10
+      "post_count": 10,
+      "created_at": "2025-01-01T00:00:00Z"
     }
   ]
 }
@@ -309,7 +359,8 @@ Authorization: Bearer <token>
       "id": 1,
       "name": "Go",
       "slug": "go",
-      "post_count": 5
+      "post_count": 5,
+      "created_at": "2025-01-01T00:00:00Z"
     }
   ]
 }
@@ -373,13 +424,9 @@ Authorization: Bearer <token>
       "id": 1,
       "title": "블로그 서비스",
       "slug": "blog-service",
-      "description": "...",
-      "content": "...",
-      "thumbnail": "...",
-      "images": ["url1", "url2"],
+      "description": "개인 블로그",
       "tech_stack": ["Go", "Next.js", "PostgreSQL"],
-      "github_url": "https://github.com/...",
-      "demo_url": "https://...",
+      "thumbnail": "https://...",
       "is_featured": true,
       "sort_order": 1
     }
@@ -392,7 +439,27 @@ Authorization: Bearer <token>
 ### GET `/admin/projects/{id}`
 프로젝트 상세 조회
 
-**Response (200):** 프로젝트 상세 데이터
+**Response (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "title": "블로그 서비스",
+    "slug": "blog-service",
+    "description": "개인 블로그",
+    "content": "프로젝트 상세 내용 (마크다운)",
+    "thumbnail": "https://...",
+    "images": ["url1", "url2"],
+    "tech_stack": ["Go", "Next.js", "PostgreSQL"],
+    "github_url": "https://github.com/...",
+    "demo_url": "https://...",
+    "is_featured": true,
+    "sort_order": 1,
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-01T00:00:00Z"
+  }
+}
+```
 
 **Errors:** 404
 
@@ -482,13 +549,22 @@ Authorization: Bearer <token>
     {
       "id": 1,
       "filename": "image.jpg",
+      "original_name": "my-image.jpg",
+      "path": "/uploads/2025/01/image.jpg",
       "url": "https://cdn.dltmxm.link/...",
-      "size": 102400,
       "mime_type": "image/jpeg",
-      "created_at": "..."
+      "size": 102400,
+      "width": 1920,
+      "height": 1080,
+      "created_at": "2025-01-01T00:00:00Z"
     }
   ],
-  "meta": { ... }
+  "meta": {
+    "page": 1,
+    "per_page": 20,
+    "total": 100,
+    "total_pages": 5
+  }
 }
 ```
 
@@ -504,12 +580,15 @@ Authorization: Bearer <token>
 |-----|------|------|
 | file | file | 업로드할 이미지 파일 (필수) |
 
+**지원 형식:** JPEG, PNG, GIF, WebP, SVG
+
 **Response (201):**
 ```json
 {
   "data": {
     "id": 1,
     "filename": "image.jpg",
+    "original_name": "my-image.jpg",
     "url": "https://cdn.dltmxm.link/..."
   }
 }
@@ -546,6 +625,9 @@ Authorization: Bearer <token>
 |-----|------|
 | 400 | Bad Request - 잘못된 요청 |
 | 401 | Unauthorized - 인증 필요 |
+| 403 | Forbidden - 권한 없음 |
 | 404 | Not Found - 리소스 없음 |
 | 409 | Conflict - 중복 데이터 |
 | 413 | Payload Too Large - 파일 크기 초과 |
+| 422 | Validation Error - 유효성 검증 실패 |
+| 500 | Internal Error - 서버 에러 |

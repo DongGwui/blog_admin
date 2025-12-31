@@ -11,11 +11,11 @@ interface ApiLoginResponse {
 }
 
 interface ApiUserResponse {
-  id: number;
-  username: string;
-  email?: string;
-  role?: string;
-  created_at?: string;
+  data: {
+    id: number;
+    username: string;
+    created_at: string;
+  };
 }
 
 export class ApiAuthRepository implements IAuthRepository {
@@ -51,10 +51,10 @@ export class ApiAuthRepository implements IAuthRepository {
     try {
       const response = await this.api.get<ApiUserResponse>('/auth/me');
       return {
-        id: response.id,
-        username: response.username,
-        email: response.email || '',
-        role: (response.role as 'admin' | 'editor') || 'admin',
+        id: response.data.id,
+        username: response.data.username,
+        email: '',
+        role: 'admin',
       };
     } catch {
       return null;

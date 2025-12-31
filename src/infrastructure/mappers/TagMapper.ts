@@ -7,6 +7,7 @@ export interface TagApiResponse {
   name: string;
   slug: string;
   post_count: number;
+  created_at: string;
 }
 
 export interface TagListApiResponse {
@@ -35,6 +36,7 @@ export class TagMapper {
       name: apiResponse.name,
       slug: apiResponse.slug,
       postCount: apiResponse.post_count,
+      createdAt: new Date(apiResponse.created_at),
     };
   }
 
