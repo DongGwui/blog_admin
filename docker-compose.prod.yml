@@ -1,0 +1,24 @@
+# Production deployment for home server
+# Usage:
+#   1. Build image: docker build --build-arg NEXT_PUBLIC_API_URL=https://blog-api.dltmxm.link/api/admin -t blog-admin:latest .
+#   2. Deploy: docker-compose -f docker-compose.prod.yml up -d
+
+services:
+  blog-admin:
+    image: blog-admin:latest
+    container_name: blog-admin
+    ports:
+      - "127.0.0.1:3001:3000"  # localhost only (use with reverse proxy)
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true
