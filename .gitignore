@@ -51,5 +51,8 @@ next-env.d.ts
 .idea
 .vscode
 
+# Claude Code 설정 (로컬 개발용)
+.claude/
+
 # docker 홈 서버
 docker-compose.yml
