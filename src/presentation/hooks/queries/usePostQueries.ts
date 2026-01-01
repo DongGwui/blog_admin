@@ -13,6 +13,10 @@ export const postKeys = {
   detail: (id: number) => [...postKeys.details(), id] as const,
 };
 
+// 캐시 시간 상수
+const STALE_TIME = 5 * 60 * 1000; // 5분
+const GC_TIME = 10 * 60 * 1000; // 10분
+
 // Get posts list
 export function usePosts(params?: GetPostsParams) {
   const { getPostsUseCase } = useDependencies();
@@ -20,6 +24,8 @@ export function usePosts(params?: GetPostsParams) {
   return useQuery({
     queryKey: postKeys.list(params),
     queryFn: () => getPostsUseCase.execute(params),
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 
@@ -31,6 +37,8 @@ export function usePost(id: number) {
     queryKey: postKeys.detail(id),
     queryFn: () => getPostByIdUseCase.execute(id),
     enabled: id > 0,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 

@@ -9,12 +9,18 @@ export const categoryKeys = {
   list: () => [...categoryKeys.all, 'list'] as const,
 };
 
+// 캐시 시간 상수
+const STALE_TIME = 5 * 60 * 1000; // 5분
+const GC_TIME = 10 * 60 * 1000; // 10분
+
 export function useCategories() {
   const { getCategoriesUseCase } = useDependencies();
 
   return useQuery({
     queryKey: categoryKeys.list(),
     queryFn: () => getCategoriesUseCase.execute(),
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 

@@ -1,11 +1,12 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { ICommand } from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import { ImageInsertModal } from '@/presentation/components/media/ImageInsertModal';
+import { ImageResizeToolbar } from './ImageResizeToolbar';
 
 // Dynamic import to avoid SSR issues
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
@@ -28,6 +29,14 @@ interface MarkdownEditorProps {
   onImageUpload?: (file: File) => Promise<string>;
 }
 
+interface ClickedImage {
+  url: string;
+  width?: string;
+  align?: 'left' | 'center' | 'right';
+  originalMarkup: string;
+  position: { top: number; left: number };
+}
+
 export function MarkdownEditor({
   value,
   onChange,
@@ -37,6 +46,8 @@ export function MarkdownEditor({
 }: MarkdownEditorProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [clickedImage, setClickedImage] = useState<ClickedImage | null>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const handleChange = useCallback(
     (val?: string) => {
@@ -109,6 +120,142 @@ export function MarkdownEditor({
     [value, onChange]
   );
 
+  // Parse image attributes from HTML img tag or markdown
+  const parseImageAttributes = useCallback(
+    (imgElement: HTMLImageElement): ClickedImage | null => {
+      const src = imgElement.getAttribute('src');
+      if (!src) return null;
+
+      // Get position for toolbar
+      const rect = imgElement.getBoundingClientRect();
+      const position = {
+        top: rect.top + window.scrollY,
+        left: rect.left + rect.width / 2,
+      };
+
+      // Try to find the original markup in the content
+      // First, check for HTML img tag
+      const imgTagRegex = new RegExp(
+        `<img[^>]*src=["']${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]*>`,
+        'i'
+      );
+      const imgTagMatch = value.match(imgTagRegex);
+
+      if (imgTagMatch) {
+        // Parse width and align from the HTML tag
+        const widthMatch = imgTagMatch[0].match(/width=["']?(\d+(?:px|%)?|\d+)["']?/i);
+        const styleMatch = imgTagMatch[0].match(/style=["']([^"']*)["']/i);
+        let align: 'left' | 'center' | 'right' = 'left';
+        let width: string | undefined;
+
+        if (widthMatch) {
+          width = widthMatch[1].replace('px', '');
+        }
+
+        if (styleMatch) {
+          const style = styleMatch[1];
+          if (style.includes('margin: 0 auto') || style.includes('margin:0 auto')) {
+            align = 'center';
+          } else if (style.includes('margin-left: auto') || style.includes('float: right')) {
+            align = 'right';
+          }
+        }
+
+        return {
+          url: src,
+          width,
+          align,
+          originalMarkup: imgTagMatch[0],
+          position,
+        };
+      }
+
+      // Check for markdown image syntax
+      const markdownRegex = new RegExp(
+        `!\\[[^\\]]*\\]\\(${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\)`,
+        'i'
+      );
+      const markdownMatch = value.match(markdownRegex);
+
+      if (markdownMatch) {
+        return {
+          url: src,
+          align: 'left',
+          originalMarkup: markdownMatch[0],
+          position,
+        };
+      }
+
+      return null;
+    },
+    [value]
+  );
+
+  // Handle click on images in the preview
+  useEffect(() => {
+    const container = editorContainerRef.current;
+    if (!container) return;
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Check if clicked on an image in the preview area
+      if (target.tagName === 'IMG' && target.closest('.wmde-markdown-var')) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const imgElement = target as HTMLImageElement;
+        const imageInfo = parseImageAttributes(imgElement);
+
+        if (imageInfo) {
+          setClickedImage(imageInfo);
+        }
+      }
+    };
+
+    container.addEventListener('click', handleClick, true);
+    return () => container.removeEventListener('click', handleClick, true);
+  }, [parseImageAttributes]);
+
+  // Handle resize apply
+  const handleResizeApply = useCallback(
+    (width: string | null, align: 'left' | 'center' | 'right') => {
+      if (!clickedImage) return;
+
+      // Build new img tag
+      let newMarkup: string;
+      const altMatch = clickedImage.originalMarkup.match(/alt=["']([^"']*)["']/i);
+      const alt = altMatch ? altMatch[1] : 'image';
+
+      // Build style string for alignment
+      let style = 'display: block;';
+      if (align === 'center') {
+        style += ' margin: 0 auto;';
+      } else if (align === 'right') {
+        style += ' margin-left: auto;';
+      }
+
+      if (width) {
+        // If it's a percentage, use it directly; otherwise treat as px
+        const widthValue = width.endsWith('%') ? width : `${width}px`;
+        newMarkup = `<img src="${clickedImage.url}" alt="${alt}" width="${widthValue}" style="${style}" />`;
+      } else {
+        // No width specified (100% / original)
+        newMarkup = `<img src="${clickedImage.url}" alt="${alt}" style="${style}" />`;
+      }
+
+      // Replace the original markup with the new one
+      const newValue = value.replace(clickedImage.originalMarkup, newMarkup);
+      onChange(newValue);
+      setClickedImage(null);
+    },
+    [clickedImage, value, onChange]
+  );
+
+  const handleResizeClose = useCallback(() => {
+    setClickedImage(null);
+  }, []);
+
   // Custom image command for toolbar
   const imageCommand: ICommand = useMemo(
     () => ({
@@ -159,7 +306,7 @@ export function MarkdownEditor({
   }, [imageCommand]);
 
   return (
-    <div className="relative h-full">
+    <div ref={editorContainerRef} className="relative h-full">
       {/* Editor Area */}
       <div
         onDrop={handleDrop}
@@ -194,6 +341,17 @@ export function MarkdownEditor({
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
         onInsert={handleImageInsert}
+      />
+
+      {/* Image Resize Toolbar */}
+      <ImageResizeToolbar
+        isOpen={!!clickedImage}
+        imageUrl={clickedImage?.url || ''}
+        currentWidth={clickedImage?.width}
+        currentAlign={clickedImage?.align}
+        position={clickedImage?.position || { top: 0, left: 0 }}
+        onClose={handleResizeClose}
+        onApply={handleResizeApply}
       />
     </div>
   );

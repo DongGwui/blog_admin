@@ -6,12 +6,18 @@ import { CreateProjectData, UpdateProjectData } from '@/domain/repositories/IPro
 
 const PROJECT_QUERY_KEY = 'projects';
 
+// 캐시 시간 상수
+const STALE_TIME = 5 * 60 * 1000; // 5분
+const GC_TIME = 10 * 60 * 1000; // 10분
+
 export function useProjects() {
   const { getProjectsUseCase } = useDependencies();
 
   return useQuery({
     queryKey: [PROJECT_QUERY_KEY],
     queryFn: () => getProjectsUseCase.execute(),
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 
@@ -22,6 +28,8 @@ export function useProject(id: number) {
     queryKey: [PROJECT_QUERY_KEY, id],
     queryFn: () => getProjectByIdUseCase.execute(id),
     enabled: id > 0,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 

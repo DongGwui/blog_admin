@@ -9,12 +9,18 @@ export const tagKeys = {
   list: () => [...tagKeys.all, 'list'] as const,
 };
 
+// 캐시 시간 상수
+const STALE_TIME = 5 * 60 * 1000; // 5분
+const GC_TIME = 10 * 60 * 1000; // 10분
+
 export function useTags() {
   const { getTagsUseCase } = useDependencies();
 
   return useQuery({
     queryKey: tagKeys.list(),
     queryFn: () => getTagsUseCase.execute(),
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 }
 

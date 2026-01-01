@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ImageInsertModal } from '@/presentation/components/media/ImageInsertModal';
 
 interface ThumbnailPickerProps {
@@ -54,12 +55,14 @@ export function ThumbnailPicker({ value, onChange }: ThumbnailPickerProps) {
                 <span className="text-sm">이미지를 불러올 수 없습니다</span>
               </div>
             ) : (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
+              <Image
                 src={value}
                 alt="썸네일 미리보기"
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 400px"
+                className="object-cover"
                 onError={() => setImageError(true)}
+                unoptimized
               />
             )}
           </div>

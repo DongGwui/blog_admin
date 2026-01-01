@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Project } from '@/domain/entities/Project';
 import { Button } from '@/presentation/components/common/Button';
 
@@ -32,14 +33,17 @@ export function ProjectCard({
       <div className="flex gap-4">
         {/* Thumbnail */}
         <div
-          className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden"
+          className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden relative"
           style={{ background: 'var(--surface-elevated)' }}
         >
           {project.thumbnailUrl ? (
-            <img
+            <Image
               src={project.thumbnailUrl}
               alt={project.title}
-              className="w-full h-full object-cover"
+              fill
+              sizes="96px"
+              className="object-cover"
+              unoptimized
             />
           ) : (
             <div
