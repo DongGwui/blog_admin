@@ -11,7 +11,10 @@ interface PostEditorLayoutProps {
 export function PostEditorLayout({ children }: PostEditorLayoutProps) {
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-white">
+      <div
+        className="min-h-screen transition-colors duration-200"
+        style={{ background: 'var(--background)' }}
+      >
         <ErrorBoundary>{children}</ErrorBoundary>
       </div>
     </AuthGuard>

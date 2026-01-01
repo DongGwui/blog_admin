@@ -597,6 +597,97 @@ body.dark {
   border-left-color: var(--border) !important;
 }
 
+/* Dark mode - textarea area */
+[data-theme="dark"] .w-md-editor-text,
+[data-theme="dark"] .w-md-editor-text-pre,
+[data-theme="dark"] .w-md-editor-text-pre > code,
+[data-theme="dark"] .w-md-editor-text-input,
+[data-theme="dark"] .w-md-editor-area {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - textarea input text */
+[data-theme="dark"] .w-md-editor-text-input {
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+/* Dark mode - syntax highlighting in editor */
+[data-theme="dark"] .w-md-editor-text-pre .token {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .w-md-editor-text-pre .token.title,
+[data-theme="dark"] .w-md-editor-text-pre .token.bold {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .w-md-editor-text-pre .token.url,
+[data-theme="dark"] .w-md-editor-text-pre .token.string {
+  color: #a5d6ff !important;
+}
+
+[data-theme="dark"] .w-md-editor-text-pre .token.code {
+  color: #79c0ff !important;
+}
+
+/* Dark mode - preview markdown content */
+[data-theme="dark"] .wmde-markdown,
+[data-theme="dark"] .wmde-markdown-var {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - code blocks in preview */
+[data-theme="dark"] .wmde-markdown pre,
+[data-theme="dark"] .wmde-markdown code {
+  background: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - blockquote */
+[data-theme="dark"] .wmde-markdown blockquote {
+  border-left-color: var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode - links */
+[data-theme="dark"] .wmde-markdown a {
+  color: var(--primary) !important;
+}
+
+/* Dark mode - headings */
+[data-theme="dark"] .wmde-markdown h1,
+[data-theme="dark"] .wmde-markdown h2,
+[data-theme="dark"] .wmde-markdown h3,
+[data-theme="dark"] .wmde-markdown h4,
+[data-theme="dark"] .wmde-markdown h5,
+[data-theme="dark"] .wmde-markdown h6 {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border) !important;
+}
+
+/* Dark mode - table */
+[data-theme="dark"] .wmde-markdown table th,
+[data-theme="dark"] .wmde-markdown table td {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .wmde-markdown table tr {
+  background: var(--surface) !important;
+}
+
+[data-theme="dark"] .wmde-markdown table tr:nth-child(2n) {
+  background: var(--surface-elevated) !important;
+}
+
+/* Dark mode - horizontal rule */
+[data-theme="dark"] .wmde-markdown hr {
+  background: var(--border) !important;
+}
+
 /* === RESPONSIVE HELPERS === */
 @media (max-width: 768px) {
   :root {

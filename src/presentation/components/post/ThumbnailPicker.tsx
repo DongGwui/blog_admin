@@ -29,16 +29,21 @@ export function ThumbnailPicker({ value, onChange }: ThumbnailPickerProps) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        썸네일
-      </label>
-
       {value ? (
         <div className="relative group">
           {/* Thumbnail Preview */}
-          <div className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+          <div
+            className="relative w-full aspect-video rounded-lg overflow-hidden"
+            style={{
+              background: 'var(--surface-elevated)',
+              border: '1px solid var(--border)',
+            }}
+          >
             {imageError ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
                 <svg
                   className="w-12 h-12 mb-2"
                   fill="none"
@@ -72,21 +77,33 @@ export function ThumbnailPicker({ value, onChange }: ThumbnailPickerProps) {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="px-3 py-1.5 bg-white text-gray-700 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors"
+              className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
+              style={{
+                background: 'var(--surface)',
+                color: 'var(--text-primary)',
+              }}
             >
               변경
             </button>
             <button
               type="button"
               onClick={handleRemove}
-              className="px-3 py-1.5 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 transition-colors"
+              className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
+              style={{
+                background: 'var(--error)',
+                color: 'white',
+              }}
             >
               제거
             </button>
           </div>
 
           {/* URL Display */}
-          <p className="mt-2 text-xs text-gray-500 truncate" title={value}>
+          <p
+            className="mt-2 text-xs truncate"
+            style={{ color: 'var(--text-tertiary)' }}
+            title={value}
+          >
             {value}
           </p>
         </div>
@@ -95,7 +112,19 @@ export function ThumbnailPicker({ value, onChange }: ThumbnailPickerProps) {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="w-full aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-500 transition-colors"
+          className="w-full aspect-video border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors"
+          style={{
+            borderColor: 'var(--border)',
+            color: 'var(--text-tertiary)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--primary)';
+            e.currentTarget.style.color = 'var(--primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border)';
+            e.currentTarget.style.color = 'var(--text-tertiary)';
+          }}
         >
           <svg
             className="w-12 h-12 mb-2"

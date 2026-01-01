@@ -7,6 +7,7 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import { ImageInsertModal } from '@/presentation/components/media/ImageInsertModal';
 import { ImageResizeToolbar } from './ImageResizeToolbar';
+import { useTheme } from '@/presentation/context/ThemeContext';
 
 // Dynamic import to avoid SSR issues
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {
@@ -48,6 +49,7 @@ export function MarkdownEditor({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [clickedImage, setClickedImage] = useState<ClickedImage | null>(null);
   const editorContainerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   const handleChange = useCallback(
     (val?: string) => {
@@ -312,14 +314,22 @@ export function MarkdownEditor({
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onPaste={handlePaste}
-        data-color-mode="light"
+        data-color-mode={theme}
         className="h-full"
       >
         {isUploading && (
-          <div className="absolute inset-0 bg-white/70 z-10 flex items-center justify-center">
+          <div
+            className="absolute inset-0 z-10 flex items-center justify-center"
+            style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)' }}
+          >
             <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600" />
-              <span className="text-sm text-gray-600">이미지 업로드 중...</span>
+              <div
+                className="animate-spin rounded-full h-5 w-5 border-b-2"
+                style={{ borderColor: 'var(--primary)' }}
+              />
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                이미지 업로드 중...
+              </span>
             </div>
           </div>
         )}

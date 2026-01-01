@@ -41,25 +41,49 @@ export function PostSettingsPanel({
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/20 z-40"
+        className="fixed inset-0 bg-black/30 z-40"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Panel */}
       <aside
-        className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-50 overflow-y-auto"
+        className="fixed right-0 top-0 h-full w-80 z-50 overflow-y-auto transition-colors duration-200"
+        style={{
+          background: 'var(--surface)',
+          boxShadow: 'var(--shadow-xl)',
+        }}
         role="dialog"
         aria-modal="true"
         aria-label="게시글 설정"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">설정</h2>
+        <div
+          className="sticky top-0 px-4 py-3 flex items-center justify-between transition-colors duration-200"
+          style={{
+            background: 'var(--surface)',
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
+          <h2
+            className="text-lg font-semibold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            설정
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
+            className="p-1 rounded-lg transition-colors"
+            style={{ color: 'var(--text-tertiary)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--text-primary)';
+              e.currentTarget.style.background = 'var(--surface-hover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-tertiary)';
+              e.currentTarget.style.background = 'transparent';
+            }}
             aria-label="닫기"
           >
             <svg
@@ -83,7 +107,12 @@ export function PostSettingsPanel({
         <div className="p-4 space-y-6">
           {/* Thumbnail */}
           <section>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">썸네일</h3>
+            <h3
+              className="text-sm font-medium mb-2"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              썸네일
+            </h3>
             <ThumbnailPicker value={thumbnail} onChange={onThumbnailChange} />
           </section>
 
@@ -92,7 +121,8 @@ export function PostSettingsPanel({
             <section>
               <label
                 htmlFor="category-select"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 카테고리
               </label>
@@ -102,7 +132,12 @@ export function PostSettingsPanel({
                 onChange={(e) =>
                   onCategoryChange(e.target.value ? Number(e.target.value) : null)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="w-full px-3 py-2 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2"
+                style={{
+                  background: 'var(--surface-elevated)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
+                }}
               >
                 <option value="">카테고리 선택</option>
                 {categories.map((category) => (
@@ -117,18 +152,30 @@ export function PostSettingsPanel({
           {/* Tags */}
           {tags.length > 0 && (
             <section>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">태그</h3>
+              <h3
+                className="text-sm font-medium mb-2"
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                태그
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <button
                     key={tag.id}
                     type="button"
                     onClick={() => onTagToggle(tag.id)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      tagIds.includes(tag.id)
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    className="px-3 py-1 rounded-full text-sm font-medium transition-colors"
+                    style={{
+                      background: tagIds.includes(tag.id)
+                        ? 'var(--primary)'
+                        : 'var(--surface-elevated)',
+                      color: tagIds.includes(tag.id)
+                        ? 'white'
+                        : 'var(--text-secondary)',
+                      border: tagIds.includes(tag.id)
+                        ? 'none'
+                        : '1px solid var(--border)',
+                    }}
                   >
                     {tag.name}
                   </button>
@@ -141,7 +188,8 @@ export function PostSettingsPanel({
           <section>
             <label
               htmlFor="slug-input"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'var(--text-secondary)' }}
             >
               URL 슬러그
             </label>
@@ -151,9 +199,17 @@ export function PostSettingsPanel({
               value={slug}
               onChange={(e) => onSlugChange(e.target.value)}
               placeholder="url-friendly-slug"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full px-3 py-2 rounded-lg text-sm transition-colors duration-200 focus:outline-none focus:ring-2"
+              style={{
+                background: 'var(--surface-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+              }}
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p
+              className="mt-1 text-xs"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
               URL에 사용될 슬러그입니다. 비워두면 자동 생성됩니다.
             </p>
           </section>
@@ -162,7 +218,8 @@ export function PostSettingsPanel({
           <section>
             <label
               htmlFor="excerpt-textarea"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'var(--text-secondary)' }}
             >
               요약
             </label>
@@ -172,7 +229,12 @@ export function PostSettingsPanel({
               onChange={(e) => onExcerptChange(e.target.value)}
               placeholder="글 요약을 입력하세요. 비워두면 자동 생성됩니다."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
+              className="w-full px-3 py-2 rounded-lg text-sm resize-none transition-colors duration-200 focus:outline-none focus:ring-2"
+              style={{
+                background: 'var(--surface-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+              }}
             />
           </section>
         </div>

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/presentation/components/common/Button';
+import { ThemeToggle } from '@/presentation/context/ThemeContext';
 
 interface PostEditorHeaderProps {
   title: string;
@@ -35,14 +36,23 @@ export function PostEditorHeader({
   };
 
   return (
-    <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+    <header
+      className="sticky top-0 z-10 transition-colors duration-200"
+      style={{
+        background: 'var(--surface)',
+        borderBottom: '1px solid var(--border)',
+      }}
+    >
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left: Back button and title */}
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 transition-colors"
+            style={{ color: 'var(--text-secondary)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
             aria-label="나가기"
           >
             <svg
@@ -63,9 +73,20 @@ export function PostEditorHeader({
           </button>
 
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+            <h1
+              className="text-lg font-semibold"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              {title}
+            </h1>
             {isDirty && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+              <span
+                className="text-xs px-2 py-0.5 rounded"
+                style={{
+                  color: 'var(--warning)',
+                  background: 'var(--warning-light)',
+                }}
+              >
                 수정됨
               </span>
             )}
@@ -74,6 +95,8 @@ export function PostEditorHeader({
 
         {/* Right: Action buttons */}
         <div className="flex items-center gap-2">
+          <ThemeToggle size="sm" />
+
           <Button
             variant="outline"
             size="sm"
@@ -97,7 +120,16 @@ export function PostEditorHeader({
           <button
             type="button"
             onClick={onSettingsToggle}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors"
+            style={{ color: 'var(--text-secondary)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--text-primary)';
+              e.currentTarget.style.background = 'var(--surface-hover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-secondary)';
+              e.currentTarget.style.background = 'transparent';
+            }}
             aria-label="설정"
           >
             <svg

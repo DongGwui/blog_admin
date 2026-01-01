@@ -33,7 +33,10 @@ export function PostContentEditor({
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="제목을 입력하세요"
-          className="w-full text-2xl sm:text-3xl font-bold text-gray-900 placeholder-gray-400 border-0 outline-none focus:ring-0 bg-transparent"
+          className="w-full text-2xl sm:text-3xl font-bold border-0 outline-none focus:ring-0 bg-transparent transition-colors duration-200"
+          style={{
+            color: 'var(--text-primary)',
+          }}
         />
       </div>
 
