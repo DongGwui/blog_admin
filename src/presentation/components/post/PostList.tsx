@@ -66,7 +66,7 @@ export function PostList({ initialStatus }: PostListProps) {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600">글 목록을 불러오는데 실패했습니다.</p>
+        <p style={{ color: 'var(--error)' }}>글 목록을 불러오는데 실패했습니다.</p>
         <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
           다시 시도
         </Button>
@@ -78,7 +78,7 @@ export function PostList({ initialStatus }: PostListProps) {
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600">상태:</span>
+        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>상태:</span>
         <div className="flex gap-1">
           <Button
             variant={statusFilter === undefined ? 'primary' : 'ghost'}
@@ -116,59 +116,104 @@ export function PostList({ initialStatus }: PostListProps) {
       {/* Post List */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div
+            className="animate-spin rounded-full h-8 w-8 border-b-2"
+            style={{ borderColor: 'var(--primary)' }}
+          />
         </div>
       ) : !data?.posts.length ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">글이 없습니다.</p>
+        <div
+          className="text-center py-12 rounded-xl"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          <p style={{ color: 'var(--text-tertiary)' }}>글이 없습니다.</p>
           <Link href="/posts/new">
             <Button className="mt-4">새 글 작성</Button>
           </Link>
         </div>
       ) : (
         <>
-          <div className="bg-white shadow overflow-hidden rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div
+            className="rounded-xl overflow-hidden"
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            <table className="min-w-full" style={{ borderColor: 'var(--border)' }}>
+              <thead style={{ background: 'var(--surface-elevated)' }}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     제목
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     상태
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     조회수
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     작성일
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     관리
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y" style={{ borderColor: 'var(--border)' }}>
                 {data.posts.map((post) => (
-                  <tr key={post.id} className="hover:bg-gray-50">
+                  <tr
+                    key={post.id}
+                    className="transition-colors duration-150 hover:bg-[var(--surface-hover)]"
+                  >
                     <td className="px-6 py-4">
                       <div>
                         <Link
                           href={`/posts/${post.id}/edit`}
-                          className="text-sm font-medium text-gray-900 hover:text-blue-600"
+                          className="text-sm font-medium transition-colors duration-150 hover:text-[var(--primary)]"
+                          style={{ color: 'var(--text-primary)' }}
                         >
                           {post.title}
                         </Link>
-                        <p className="text-sm text-gray-500 truncate max-w-md">{post.excerpt}</p>
+                        <p
+                          className="text-sm truncate max-w-md"
+                          style={{ color: 'var(--text-tertiary)' }}
+                        >
+                          {post.excerpt}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <PostStatusBadge status={post.status} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
                       {post.viewCount.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
                       {formatDate(post.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
@@ -213,7 +258,10 @@ export function PostList({ initialStatus }: PostListProps) {
               >
                 이전
               </Button>
-              <span className="flex items-center px-4 text-sm text-gray-600">
+              <span
+                className="flex items-center px-4 text-sm"
+                style={{ color: 'var(--text-secondary)' }}
+              >
                 {page} / {data.totalPages}
               </span>
               <Button

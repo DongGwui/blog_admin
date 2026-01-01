@@ -13,12 +13,16 @@ export function MediaList() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+        <div
+          className="h-32 rounded-xl animate-pulse"
+          style={{ background: 'var(--surface-elevated)' }}
+        />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
-              className="aspect-square bg-gray-100 rounded-lg animate-pulse"
+              className="aspect-square rounded-xl animate-pulse"
+              style={{ background: 'var(--surface-elevated)' }}
             />
           ))}
         </div>
@@ -29,7 +33,9 @@ export function MediaList() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600 mb-4">미디어를 불러오는데 실패했습니다.</p>
+        <p className="mb-4" style={{ color: 'var(--error)' }}>
+          미디어를 불러오는데 실패했습니다.
+        </p>
         <Button onClick={() => refetch()}>다시 시도</Button>
       </div>
     );
@@ -53,7 +59,10 @@ export function MediaList() {
           >
             이전
           </Button>
-          <span className="py-2 px-4 text-sm text-gray-600">
+          <span
+            className="py-2 px-4 text-sm"
+            style={{ color: 'var(--text-secondary)' }}
+          >
             {page} / {data.totalPages}
           </span>
           <Button

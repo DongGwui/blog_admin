@@ -16,11 +16,14 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | null>(null);
 
-const toastStyles: Record<ToastType, string> = {
-  success: 'bg-green-500 text-white',
-  error: 'bg-red-500 text-white',
-  warning: 'bg-yellow-500 text-white',
-  info: 'bg-blue-500 text-white',
+const getToastStyle = (type: ToastType): React.CSSProperties => {
+  const styles: Record<ToastType, React.CSSProperties> = {
+    success: { background: 'var(--success)', color: 'white' },
+    error: { background: 'var(--error)', color: 'white' },
+    warning: { background: 'var(--warning)', color: 'white' },
+    info: { background: 'var(--primary)', color: 'white' },
+  };
+  return styles[type];
 };
 
 const toastIcons: Record<ToastType, string> = {
@@ -75,12 +78,8 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
 
   return (
     <div
-      className={`
-        flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg
-        min-w-[300px] max-w-[400px]
-        animate-slide-in
-        ${toastStyles[toast.type]}
-      `}
+      className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg min-w-[300px] max-w-[400px] animate-slide-in"
+      style={getToastStyle(toast.type)}
     >
       <span className="text-lg">{toastIcons[toast.type]}</span>
       <p className="flex-1 text-sm">{toast.message}</p>

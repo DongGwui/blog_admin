@@ -9,8 +9,18 @@ export default function PostsPage() {
     <div className="p-6">
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">글 관리</h1>
-          <p className="text-gray-500 mt-1">블로그 글을 관리합니다.</p>
+          <h1
+            className="text-2xl font-bold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            글 관리
+          </h1>
+          <p
+            className="mt-1"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            블로그 글을 관리합니다.
+          </p>
         </div>
         <Link href="/posts/new">
           <Button>새 글 작성</Button>

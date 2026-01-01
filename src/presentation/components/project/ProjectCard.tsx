@@ -20,13 +20,21 @@ export function ProjectCard({
 }: ProjectCardProps) {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border p-4 transition-all ${
-        isDragging ? 'opacity-50 scale-105 shadow-lg' : ''
+      className={`rounded-xl p-4 transition-all ${
+        isDragging ? 'opacity-50 scale-105' : ''
       } ${!project.isVisible ? 'opacity-60' : ''}`}
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        boxShadow: isDragging ? 'var(--shadow-lg)' : undefined,
+      }}
     >
       <div className="flex gap-4">
         {/* Thumbnail */}
-        <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+        <div
+          className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden"
+          style={{ background: 'var(--surface-elevated)' }}
+        >
           {project.thumbnailUrl ? (
             <img
               src={project.thumbnailUrl}
@@ -34,7 +42,10 @@ export function ProjectCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div
+              className="w-full h-full flex items-center justify-center"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
               <svg
                 className="w-8 h-8"
                 fill="none"
@@ -56,16 +67,28 @@ export function ProjectCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h3 className="font-semibold text-gray-900 truncate">
+              <h3
+                className="font-semibold truncate"
+                style={{ color: 'var(--text-primary)' }}
+              >
                 {project.title}
               </h3>
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+              <p
+                className="text-sm mt-1 line-clamp-2"
+                style={{ color: 'var(--text-secondary)' }}
+              >
                 {project.description}
               </p>
             </div>
             <div className="flex items-center gap-1">
               {!project.isVisible && (
-                <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
+                <span
+                  className="px-2 py-1 text-xs rounded"
+                  style={{
+                    background: 'var(--surface-elevated)',
+                    color: 'var(--text-tertiary)',
+                  }}
+                >
                   숨김
                 </span>
               )}
@@ -78,13 +101,23 @@ export function ProjectCard({
               {project.techStack.slice(0, 5).map((tech) => (
                 <span
                   key={tech}
-                  className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded"
+                  className="px-2 py-0.5 text-xs rounded"
+                  style={{
+                    background: 'var(--primary-light)',
+                    color: 'var(--primary)',
+                  }}
                 >
                   {tech}
                 </span>
               ))}
               {project.techStack.length > 5 && (
-                <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
+                <span
+                  className="px-2 py-0.5 text-xs rounded"
+                  style={{
+                    background: 'var(--surface-elevated)',
+                    color: 'var(--text-tertiary)',
+                  }}
+                >
                   +{project.techStack.length - 5}
                 </span>
               )}
@@ -98,7 +131,8 @@ export function ProjectCard({
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm transition-colors duration-150 hover:text-[var(--primary)]"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 GitHub
               </a>
@@ -108,7 +142,8 @@ export function ProjectCard({
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm transition-colors duration-150 hover:text-[var(--primary)]"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 Demo
               </a>

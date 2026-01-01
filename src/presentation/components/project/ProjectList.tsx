@@ -100,7 +100,8 @@ export function ProjectList() {
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="h-32 bg-gray-100 rounded-lg animate-pulse"
+            className="h-32 rounded-xl animate-pulse"
+            style={{ background: 'var(--surface-elevated)' }}
           />
         ))}
       </div>
@@ -110,7 +111,9 @@ export function ProjectList() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600 mb-4">프로젝트를 불러오는데 실패했습니다.</p>
+        <p className="mb-4" style={{ color: 'var(--error)' }}>
+          프로젝트를 불러오는데 실패했습니다.
+        </p>
         <Button onClick={() => refetch()}>다시 시도</Button>
       </div>
     );
@@ -137,7 +140,7 @@ export function ProjectList() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
             드래그하여 순서를 변경할 수 있습니다.
           </p>
         </div>
@@ -158,8 +161,14 @@ export function ProjectList() {
               className="cursor-move"
             >
               {deleteConfirmId === project.id ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-800 mb-3">
+                <div
+                  className="rounded-xl p-4"
+                  style={{
+                    background: 'var(--error-light)',
+                    border: '1px solid var(--error)',
+                  }}
+                >
+                  <p className="mb-3" style={{ color: 'var(--error)' }}>
                     &quot;{project.title}&quot; 프로젝트를 삭제하시겠습니까?
                   </p>
                   <div className="flex gap-2">
@@ -193,7 +202,14 @@ export function ProjectList() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500">
+        <div
+          className="text-center py-12 rounded-xl"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-tertiary)',
+          }}
+        >
           프로젝트가 없습니다. 새 프로젝트를 추가해보세요.
         </div>
       )}

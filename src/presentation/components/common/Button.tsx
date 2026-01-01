@@ -1,4 +1,6 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+'use client';
+
+import { ButtonHTMLAttributes, forwardRef, CSSProperties } from 'react';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -9,17 +11,72 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300',
-  secondary:
-    'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 disabled:bg-gray-100',
-  danger:
-    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-red-300',
-  ghost:
-    'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500 disabled:text-gray-400',
-  outline:
-    'bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500 disabled:text-gray-400 disabled:border-gray-200',
+interface VariantStyle {
+  base: CSSProperties;
+  hover: string;
+  disabled: CSSProperties;
+}
+
+const getVariantStyles = (variant: ButtonVariant): VariantStyle => {
+  const styles: Record<ButtonVariant, VariantStyle> = {
+    primary: {
+      base: {
+        background: 'var(--primary)',
+        color: 'white',
+      },
+      hover: 'hover:opacity-90',
+      disabled: {
+        background: 'var(--primary)',
+        opacity: 0.5,
+      },
+    },
+    secondary: {
+      base: {
+        background: 'var(--surface-elevated)',
+        color: 'var(--text-primary)',
+      },
+      hover: 'hover:opacity-80',
+      disabled: {
+        background: 'var(--surface)',
+        color: 'var(--text-tertiary)',
+      },
+    },
+    danger: {
+      base: {
+        background: 'var(--error)',
+        color: 'white',
+      },
+      hover: 'hover:opacity-90',
+      disabled: {
+        background: 'var(--error)',
+        opacity: 0.5,
+      },
+    },
+    ghost: {
+      base: {
+        background: 'transparent',
+        color: 'var(--text-secondary)',
+      },
+      hover: 'hover:bg-[var(--surface-hover)]',
+      disabled: {
+        color: 'var(--text-tertiary)',
+      },
+    },
+    outline: {
+      base: {
+        background: 'transparent',
+        border: '1px solid var(--border)',
+        color: 'var(--text-secondary)',
+      },
+      hover: 'hover:bg-[var(--surface-hover)]',
+      disabled: {
+        color: 'var(--text-tertiary)',
+        borderColor: 'var(--border)',
+        opacity: 0.5,
+      },
+    },
+  };
+  return styles[variant];
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -37,24 +94,33 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       className = '',
       children,
+      style,
       ...props
     },
     ref
   ) => {
+    const variantStyle = getVariantStyles(variant);
+    const isDisabled = disabled || isLoading;
+
     return (
       <button
         ref={ref}
-        disabled={disabled || isLoading}
+        disabled={isDisabled}
         className={`
           inline-flex items-center justify-center
           font-medium rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-offset-2
-          transition-colors duration-200
+          focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--background)]
+          transition-all duration-200
           disabled:cursor-not-allowed
-          ${variantStyles[variant]}
+          ${variantStyle.hover}
           ${sizeStyles[size]}
           ${className}
         `}
+        style={{
+          ...variantStyle.base,
+          ...(isDisabled ? variantStyle.disabled : {}),
+          ...style,
+        }}
         {...props}
       >
         {isLoading ? (

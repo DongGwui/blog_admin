@@ -99,7 +99,7 @@ export function CategoryList() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600">카테고리를 불러오는데 실패했습니다.</p>
+        <p style={{ color: 'var(--error)' }}>카테고리를 불러오는데 실패했습니다.</p>
       </div>
     );
   }
@@ -117,8 +117,16 @@ export function CategoryList() {
 
       {/* Add Form */}
       {isAdding && editing && (
-        <div className="bg-blue-50 rounded-lg p-4 space-y-3">
-          <h3 className="font-medium text-gray-900">새 카테고리</h3>
+        <div
+          className="rounded-xl p-4 space-y-3"
+          style={{
+            background: 'var(--primary-light)',
+            border: '1px solid var(--primary)',
+          }}
+        >
+          <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>
+            새 카테고리
+          </h3>
           <Input
             label="이름"
             value={editing.name}
@@ -145,16 +153,36 @@ export function CategoryList() {
       {/* Category List */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div
+            className="animate-spin rounded-full h-8 w-8 border-b-2"
+            style={{ borderColor: 'var(--primary)' }}
+          />
         </div>
       ) : !categories?.length ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">카테고리가 없습니다.</p>
+        <div
+          className="text-center py-12 rounded-xl"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          <p style={{ color: 'var(--text-tertiary)' }}>카테고리가 없습니다.</p>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg divide-y">
+        <div
+          className="rounded-xl divide-y overflow-hidden"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderColor: 'var(--border)',
+          }}
+        >
           {categories.map((category) => (
-            <div key={category.id} className="p-4">
+            <div
+              key={category.id}
+              className="p-4 transition-colors duration-150 hover:bg-[var(--surface-hover)]"
+              style={{ borderColor: 'var(--border)' }}
+            >
               {editing?.id === category.id ? (
                 <div className="space-y-3">
                   <Input
@@ -179,11 +207,15 @@ export function CategoryList() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-medium text-gray-900">{category.name}</h3>
+                    <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                      {category.name}
+                    </h3>
                     {category.description && (
-                      <p className="text-sm text-gray-500">{category.description}</p>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {category.description}
+                      </p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                       슬러그: {category.slug} · 글 {category.postCount}개
                     </p>
                   </div>

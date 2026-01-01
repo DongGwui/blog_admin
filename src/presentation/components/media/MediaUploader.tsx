@@ -61,11 +61,11 @@ export function MediaUploader({ onUploadComplete }: MediaUploaderProps) {
 
   return (
     <div
-      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-        isDragOver
-          ? 'border-blue-500 bg-blue-50'
-          : 'border-gray-300 hover:border-gray-400'
-      }`}
+      className="relative border-2 border-dashed rounded-xl p-8 text-center transition-all"
+      style={{
+        background: isDragOver ? 'var(--primary-light)' : 'var(--surface)',
+        borderColor: isDragOver ? 'var(--primary)' : 'var(--border)',
+      }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -79,7 +79,8 @@ export function MediaUploader({ onUploadComplete }: MediaUploaderProps) {
       />
       <div className="space-y-2">
         <svg
-          className="mx-auto h-12 w-12 text-gray-400"
+          className="mx-auto h-12 w-12"
+          style={{ color: 'var(--text-tertiary)' }}
           stroke="currentColor"
           fill="none"
           viewBox="0 0 48 48"
@@ -91,22 +92,24 @@ export function MediaUploader({ onUploadComplete }: MediaUploaderProps) {
             strokeLinejoin="round"
           />
         </svg>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           {uploadMutation.isPending ? (
             <span>업로드 중...</span>
           ) : (
             <span>
-              <span className="font-medium text-blue-600">파일 선택</span> 또는
-              드래그 앤 드롭
+              <span className="font-medium" style={{ color: 'var(--primary)' }}>
+                파일 선택
+              </span>{' '}
+              또는 드래그 앤 드롭
             </span>
           )}
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
           PNG, JPG, GIF, WebP (최대 10MB)
         </p>
       </div>
       {uploadMutation.isError && (
-        <p className="mt-2 text-sm text-red-600">
+        <p className="mt-2 text-sm" style={{ color: 'var(--error)' }}>
           {uploadMutation.error instanceof Error
             ? uploadMutation.error.message
             : '업로드에 실패했습니다.'}

@@ -1,3 +1,5 @@
+'use client';
+
 import { InputHTMLAttributes, forwardRef } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,7 +17,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium mb-1"
+            style={{ color: 'var(--text-secondary)' }}
           >
             {label}
           </label>
@@ -25,23 +28,29 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           className={`
             w-full px-4 py-2
-            border rounded-lg
-            text-gray-900 placeholder-gray-400
+            rounded-lg
             focus:outline-none focus:ring-2 focus:ring-offset-0
-            transition-colors duration-200
-            disabled:bg-gray-100 disabled:cursor-not-allowed
-            ${
-              error
-                ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-            }
+            transition-all duration-200
+            disabled:cursor-not-allowed
             ${className}
           `}
+          style={{
+            background: 'var(--surface)',
+            color: 'var(--text-primary)',
+            border: error ? '1px solid var(--error)' : '1px solid var(--border)',
+            ...(props.disabled ? { background: 'var(--surface-elevated)', color: 'var(--text-tertiary)' } : {}),
+          }}
           {...props}
         />
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="mt-1 text-sm" style={{ color: 'var(--error)' }}>
+            {error}
+          </p>
+        )}
         {helperText && !error && (
-          <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+          <p className="mt-1 text-sm" style={{ color: 'var(--text-tertiary)' }}>
+            {helperText}
+          </p>
         )}
       </div>
     );

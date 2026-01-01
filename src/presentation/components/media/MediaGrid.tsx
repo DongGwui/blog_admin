@@ -38,7 +38,14 @@ export function MediaGrid({
 
   if (media.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div
+        className="text-center py-12 rounded-xl"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          color: 'var(--text-tertiary)',
+        }}
+      >
         업로드된 미디어가 없습니다.
       </div>
     );
@@ -53,15 +60,22 @@ export function MediaGrid({
         return (
           <div
             key={item.id}
-            className={`relative group bg-white rounded-lg overflow-hidden shadow-sm border-2 transition-all ${
+            className={`relative group rounded-xl overflow-hidden transition-all ${
               isSelected
-                ? 'border-blue-500 ring-2 ring-blue-200'
-                : 'border-transparent hover:border-gray-200'
+                ? 'ring-2 ring-[var(--primary)]'
+                : 'hover:ring-1 hover:ring-[var(--border)]'
             } ${selectable ? 'cursor-pointer' : ''}`}
+            style={{
+              background: 'var(--surface)',
+              border: isSelected ? '2px solid var(--primary)' : '2px solid transparent',
+            }}
             onClick={() => selectable && onSelect?.(item)}
           >
             {/* Image */}
-            <div className="aspect-square bg-gray-100">
+            <div
+              className="aspect-square"
+              style={{ background: 'var(--surface-elevated)' }}
+            >
               <img
                 src={item.url}
                 alt={item.originalName}
@@ -72,7 +86,10 @@ export function MediaGrid({
 
             {/* Selection overlay */}
             {selectable && isSelected && (
-              <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+              <div
+                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
+                style={{ background: 'var(--primary)' }}
+              >
                 <svg
                   className="w-4 h-4 text-white"
                   fill="none"
@@ -94,7 +111,7 @@ export function MediaGrid({
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-end justify-between p-2 opacity-0 group-hover:opacity-100">
                 <div className="text-white text-xs truncate flex-1 mr-2">
                   <p className="font-medium truncate">{item.originalName}</p>
-                  <p className="text-gray-300">{formatFileSize(item.size)}</p>
+                  <p className="text-white/70">{formatFileSize(item.size)}</p>
                 </div>
                 {deleteConfirmId === item.id ? (
                   <div className="flex gap-1">
@@ -122,7 +139,8 @@ export function MediaGrid({
                   </div>
                 ) : (
                   <button
-                    className="p-1 bg-red-500 rounded text-white hover:bg-red-600 transition-colors"
+                    className="p-1 rounded text-white transition-colors"
+                    style={{ background: 'var(--error)' }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteConfirmId(item.id);

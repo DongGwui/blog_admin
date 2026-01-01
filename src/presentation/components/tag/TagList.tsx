@@ -83,7 +83,7 @@ export function TagList() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600">태그를 불러오는데 실패했습니다.</p>
+        <p style={{ color: 'var(--error)' }}>태그를 불러오는데 실패했습니다.</p>
       </div>
     );
   }
@@ -93,7 +93,13 @@ export function TagList() {
   return (
     <div className="space-y-4">
       {/* Add Form */}
-      <div className="bg-white rounded-lg shadow p-4">
+      <div
+        className="rounded-xl p-4"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+        }}
+      >
         <div className="flex gap-3 items-end">
           <div className="flex-1">
             <Input
@@ -132,19 +138,37 @@ export function TagList() {
       {/* Tag List */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div
+            className="animate-spin rounded-full h-8 w-8 border-b-2"
+            style={{ borderColor: 'var(--primary)' }}
+          />
         </div>
       ) : !tags?.length ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">태그가 없습니다.</p>
+        <div
+          className="text-center py-12 rounded-xl"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          <p style={{ color: 'var(--text-tertiary)' }}>태그가 없습니다.</p>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg p-4">
+        <div
+          className="rounded-xl p-4"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+          }}
+        >
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <div
                 key={tag.id}
-                className="group relative inline-flex items-center bg-gray-100 rounded-full px-4 py-2"
+                className="group relative inline-flex items-center rounded-full px-4 py-2 transition-colors duration-150"
+                style={{
+                  background: 'var(--surface-elevated)',
+                }}
               >
                 {editing?.id === tag.id ? (
                   <div className="flex items-center gap-2">
@@ -152,7 +176,12 @@ export function TagList() {
                       type="text"
                       value={editing.name}
                       onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                      className="w-24 px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-24 px-2 py-1 text-sm rounded focus:outline-none focus:ring-2"
+                      style={{
+                        background: 'var(--surface)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-primary)',
+                      }}
                       autoFocus
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -166,7 +195,8 @@ export function TagList() {
                     <button
                       onClick={handleSave}
                       disabled={isSubmitting}
-                      className="text-blue-600 hover:text-blue-800"
+                      style={{ color: 'var(--primary)' }}
+                      className="hover:opacity-80"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -183,7 +213,8 @@ export function TagList() {
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="text-gray-500 hover:text-gray-700"
+                      style={{ color: 'var(--text-tertiary)' }}
+                      className="hover:opacity-80"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -201,12 +232,17 @@ export function TagList() {
                   </div>
                 ) : (
                   <>
-                    <span className="text-sm font-medium text-gray-700">{tag.name}</span>
-                    <span className="ml-2 text-xs text-gray-400">({tag.postCount})</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                      {tag.name}
+                    </span>
+                    <span className="ml-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                      ({tag.postCount})
+                    </span>
                     <div className="hidden group-hover:flex items-center ml-2 gap-1">
                       <button
                         onClick={() => handleStartEdit(tag)}
-                        className="text-gray-500 hover:text-blue-600"
+                        className="transition-colors duration-150 hover:text-[var(--primary)]"
+                        style={{ color: 'var(--text-tertiary)' }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +256,8 @@ export function TagList() {
                       <button
                         onClick={() => handleDelete(tag)}
                         disabled={deleteMutation.isPending}
-                        className="text-gray-500 hover:text-red-600"
+                        className="transition-colors duration-150 hover:text-[var(--error)]"
+                        style={{ color: 'var(--text-tertiary)' }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

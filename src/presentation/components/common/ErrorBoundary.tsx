@@ -40,9 +40,13 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-64 flex items-center justify-center p-8">
           <div className="text-center max-w-md">
-            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+            <div
+              className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+              style={{ background: 'var(--error-light)' }}
+            >
               <svg
-                className="w-8 h-8 text-red-600"
+                className="w-8 h-8"
+                style={{ color: 'var(--error)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -55,10 +59,13 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2
+              className="text-xl font-semibold mb-2"
+              style={{ color: 'var(--text-primary)' }}
+            >
               오류가 발생했습니다
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>
               페이지를 표시하는 중 문제가 발생했습니다.
             </p>
             <div className="flex gap-3 justify-center">
