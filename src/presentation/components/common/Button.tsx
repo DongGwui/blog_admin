@@ -65,7 +65,9 @@ const getVariantStyles = (variant: ButtonVariant): VariantStyle => {
     outline: {
       base: {
         background: 'transparent',
-        border: '1px solid var(--border)',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: 'var(--border)',
         color: 'var(--text-secondary)',
       },
       hover: 'hover:bg-[var(--surface-hover)]',
