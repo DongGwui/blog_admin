@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Project } from '@/domain/entities/Project';
 import {
   useCreateProject,
   useUpdateProject,
+  useProject,
 } from '@/presentation/hooks/useProjectQueries';
+import { useUploadMedia } from '@/presentation/hooks/useMediaQueries';
 import { Button } from '@/presentation/components/common/Button';
 import { Input } from '@/presentation/components/common/Input';
+import { MarkdownEditor } from '@/presentation/components/editor/MarkdownEditor';
 
 interface ProjectFormProps {
   project?: Project;
@@ -18,20 +21,40 @@ interface ProjectFormProps {
 export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
   const createProject = useCreateProject();
   const updateProject = useUpdateProject();
+  const uploadMedia = useUploadMedia();
 
-  const [title, setTitle] = useState(project?.title || '');
-  const [description, setDescription] = useState(project?.description || '');
-  const [content, setContent] = useState(project?.content || '');
-  const [thumbnailUrl, setThumbnailUrl] = useState(project?.thumbnailUrl || '');
-  const [githubUrl, setGithubUrl] = useState(project?.githubUrl || '');
-  const [demoUrl, setDemoUrl] = useState(project?.demoUrl || '');
+  // 수정 모드일 때 상세 데이터 조회
+  const { data: projectDetail, isLoading: isLoadingDetail } = useProject(project?.id || 0);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [content, setContent] = useState('');
+  const [thumbnailUrl, setThumbnailUrl] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
+  const [demoUrl, setDemoUrl] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
-  const [techStack, setTechStack] = useState<string[]>(project?.techStack || []);
-  const [isVisible, setIsVisible] = useState(project?.isVisible ?? true);
+  const [techStack, setTechStack] = useState<string[]>([]);
+  const [isVisible, setIsVisible] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const isEditing = !!project;
   const isPending = createProject.isPending || updateProject.isPending;
+
+  // 상세 데이터가 로드되면 폼 초기화
+  useEffect(() => {
+    if (isEditing && projectDetail && !isInitialized) {
+      setTitle(projectDetail.title || '');
+      setDescription(projectDetail.description || '');
+      setContent(projectDetail.content || '');
+      setThumbnailUrl(projectDetail.thumbnailUrl || '');
+      setGithubUrl(projectDetail.githubUrl || '');
+      setDemoUrl(projectDetail.demoUrl || '');
+      setTechStack(projectDetail.techStack || []);
+      setIsVisible(projectDetail.isVisible ?? true);
+      setIsInitialized(true);
+    }
+  }, [isEditing, projectDetail, isInitialized]);
 
   const handleAddTech = useCallback(() => {
     const tech = techStackInput.trim();
@@ -53,6 +76,14 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
       }
     },
     [handleAddTech]
+  );
+
+  const handleImageUpload = useCallback(
+    async (file: File): Promise<string> => {
+      const result = await uploadMedia.mutateAsync(file);
+      return result.url;
+    },
+    [uploadMedia]
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,14 +124,26 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
     }
   };
 
+  // 수정 모드에서 데이터 로딩 중
+  if (isEditing && isLoadingDetail) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <span className="ml-3 text-gray-600 dark:text-gray-400">프로젝트 정보를 불러오는 중...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border p-6">
-      <h2 className="text-lg font-semibold mb-6">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6">
+      <h2 className="text-lg font-semibold mb-6 dark:text-white">
         {isEditing ? '프로젝트 수정' : '새 프로젝트'}
       </h2>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-sm">
           {error}
         </div>
       )}
@@ -134,15 +177,15 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
 
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             상세 내용
           </label>
-          <textarea
+          <MarkdownEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="프로젝트 상세 내용 (Markdown 지원)"
-            rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+            onChange={setContent}
+            placeholder="프로젝트 상세 내용을 마크다운으로 작성하세요..."
+            height={300}
+            onImageUpload={handleImageUpload}
           />
         </div>
 
@@ -159,9 +202,23 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
               placeholder="기술 입력 후 Enter"
               className="flex-1"
             />
-            <Button type="button" variant="outline" onClick={handleAddTech}>
-              추가
-            </Button>
+            <button
+              type="button"
+              onClick={handleAddTech}
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+              aria-label="기술 스택 추가"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
           </div>
           {techStack.length > 0 && (
             <div className="flex flex-wrap gap-2">
