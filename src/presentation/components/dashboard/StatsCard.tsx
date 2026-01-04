@@ -63,10 +63,11 @@ export function StatsCard({
 
   return (
     <div
-      className="group relative rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-default"
+      className="group relative rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-default h-full"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--border)',
+        minHeight: '160px',
       }}
     >
       {/* Gradient accent line at top */}
