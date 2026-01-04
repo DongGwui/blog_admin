@@ -56,7 +56,7 @@ const MediaGridItem = memo(function MediaGridItem({
         style={{ background: 'var(--surface-elevated)' }}
       >
         <Image
-          src={item.url}
+          src={item.thumbnailSm || item.url}
           alt={item.originalName}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"

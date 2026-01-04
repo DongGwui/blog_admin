@@ -40,8 +40,10 @@ export function ImageInsertModal({
     if (!selectedMedia) return;
 
     const alt = altText.trim() || 'image';
+    // 본문용 이미지는 thumbnailMd(400px)를 사용, 없으면 원본 URL로 폴백
+    const imageUrl = selectedMedia.thumbnailMd || selectedMedia.url;
     // Insert as simple markdown - resizing will be done by clicking the image in editor
-    const markdown = `![${alt}](${selectedMedia.url})`;
+    const markdown = `![${alt}](${imageUrl})`;
     onInsert(markdown);
 
     // Reset state
@@ -565,7 +567,7 @@ export function ImageInsertModal({
                   style={{ background: 'var(--surface)' }}
                 >
                   <Image
-                    src={selectedMedia.url}
+                    src={selectedMedia.thumbnailSm || selectedMedia.url}
                     alt={selectedMedia.originalName}
                     fill
                     sizes="64px"

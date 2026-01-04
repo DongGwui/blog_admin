@@ -11,6 +11,7 @@ import { useUploadMedia } from '@/presentation/hooks/useMediaQueries';
 import { Button } from '@/presentation/components/common/Button';
 import { Input } from '@/presentation/components/common/Input';
 import { MarkdownEditor } from '@/presentation/components/editor/MarkdownEditor';
+import { MediaPicker } from '@/presentation/components/media/MediaPicker';
 
 interface ProjectFormProps {
   project?: Project;
@@ -37,6 +38,7 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   const isEditing = !!project;
   const isPending = createProject.isPending || updateProject.isPending;
@@ -81,7 +83,8 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
   const handleImageUpload = useCallback(
     async (file: File): Promise<string> => {
       const result = await uploadMedia.mutateAsync(file);
-      return result.url;
+      // 본문용 이미지는 thumbnailMd(400px) 사용, 없으면 원본으로 폴백
+      return result.thumbnailMd || result.url;
     },
     [uploadMedia]
   );
@@ -241,20 +244,73 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
           )}
         </div>
 
-        {/* URLs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              썸네일 URL
-            </label>
-            <Input
-              value={thumbnailUrl}
-              onChange={(e) => setThumbnailUrl(e.target.value)}
-              placeholder="https://..."
-            />
+        {/* Thumbnail */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            썸네일 이미지
+          </label>
+          <div className="flex gap-4">
+            {/* 미리보기 영역 */}
+            <div className="flex-shrink-0 w-32 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden flex items-center justify-center">
+              {thumbnailUrl ? (
+                <img
+                  src={thumbnailUrl}
+                  alt="썸네일 미리보기"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              )}
+            </div>
+            {/* URL 입력 및 버튼 */}
+            <div className="flex-1 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <Input
+                  value={thumbnailUrl}
+                  onChange={(e) => setThumbnailUrl(e.target.value)}
+                  placeholder="https://... 또는 라이브러리에서 선택"
+                  className="flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsMediaPickerOpen(true)}
+                  className="flex-shrink-0 px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                >
+                  라이브러리에서 선택
+                </button>
+                {thumbnailUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setThumbnailUrl('')}
+                    className="flex-shrink-0 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors"
+                  >
+                    삭제
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                업로드된 이미지를 선택하거나 URL을 직접 입력하세요
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* URLs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               GitHub URL
             </label>
             <Input
@@ -264,7 +320,7 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Demo URL
             </label>
             <Input
@@ -299,6 +355,13 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
           {isPending ? '저장 중...' : isEditing ? '수정' : '생성'}
         </Button>
       </div>
+
+      {/* Media Picker Modal */}
+      <MediaPicker
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(media) => setThumbnailUrl(media.thumbnailMd || media.url)}
+      />
     </form>
   );
 }

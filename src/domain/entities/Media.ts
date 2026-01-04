@@ -3,6 +3,8 @@ export interface Media {
   filename: string;
   originalName: string;
   url: string;
+  thumbnailSm?: string; // 150px - 목록 썸네일용
+  thumbnailMd?: string; // 400px - 본문용
   mimeType: string;
   size: number;
   width: number;

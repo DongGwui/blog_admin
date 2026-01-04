@@ -6,6 +6,8 @@ export interface MediaApiResponse {
   filename: string;
   original_name: string;
   url: string;
+  thumbnail_sm?: string; // 150px 썸네일
+  thumbnail_md?: string; // 400px 썸네일
   mime_type: string;
   size: number;
   width: number;
@@ -34,6 +36,8 @@ export class MediaMapper {
       filename: apiMedia.filename,
       originalName: apiMedia.original_name,
       url: apiMedia.url,
+      thumbnailSm: apiMedia.thumbnail_sm || undefined,
+      thumbnailMd: apiMedia.thumbnail_md || undefined,
       mimeType: apiMedia.mime_type,
       size: apiMedia.size,
       width: apiMedia.width,
