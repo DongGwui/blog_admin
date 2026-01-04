@@ -7,6 +7,7 @@ import { PostStatusBadge } from './PostStatusBadge';
 import { Button } from '@/presentation/components/common/Button';
 import { usePosts, useDeletePost, usePublishPost } from '@/presentation/hooks/queries/usePostQueries';
 import { useToast } from '@/presentation/components/common/Toast';
+import { CommentModal } from '@/presentation/components/comment/CommentModal';
 
 // 날짜 포맷 함수 (컴포넌트 외부에 정의하여 재생성 방지)
 const formatDate = (date: Date) => {
@@ -22,6 +23,7 @@ interface PostListRowProps {
   post: Post;
   onDelete: (post: Post) => void;
   onTogglePublish: (post: Post) => void;
+  onViewComments: (post: Post) => void;
   isDeleting: boolean;
   isPublishing: boolean;
 }
@@ -30,6 +32,7 @@ const PostListRow = memo(function PostListRow({
   post,
   onDelete,
   onTogglePublish,
+  onViewComments,
   isDeleting,
   isPublishing,
 }: PostListRowProps) {
@@ -69,6 +72,13 @@ const PostListRow = memo(function PostListRow({
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
         <div className="flex justify-end gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onViewComments(post)}
+          >
+            댓글
+          </Button>
           <Button
             variant="ghost"
             size="sm"
@@ -143,6 +153,7 @@ interface PostListProps {
 export function PostList({ initialStatus }: PostListProps) {
   const [statusFilter, setStatusFilter] = useState<PostStatus | undefined>(initialStatus);
   const [page, setPage] = useState(1);
+  const [commentModalPost, setCommentModalPost] = useState<Post | null>(null);
   const { showToast } = useToast();
 
   // 쿼리 파라미터 메모이제이션
@@ -200,6 +211,14 @@ export function PostList({ initialStatus }: PostListProps) {
       setPage((p) => Math.min(data.totalPages, p + 1));
     }
   }, [data]);
+
+  const handleViewComments = useCallback((post: Post) => {
+    setCommentModalPost(post);
+  }, []);
+
+  const handleCloseCommentModal = useCallback(() => {
+    setCommentModalPost(null);
+  }, []);
 
   if (error) {
     return (
@@ -289,6 +308,7 @@ export function PostList({ initialStatus }: PostListProps) {
                     post={post}
                     onDelete={handleDelete}
                     onTogglePublish={handleTogglePublish}
+                    onViewComments={handleViewComments}
                     isDeleting={deletePostMutation.isPending}
                     isPublishing={publishPostMutation.isPending}
                   />
@@ -325,6 +345,16 @@ export function PostList({ initialStatus }: PostListProps) {
             </div>
           )}
         </>
+      )}
+
+      {/* Comment Modal */}
+      {commentModalPost && (
+        <CommentModal
+          isOpen={!!commentModalPost}
+          onClose={handleCloseCommentModal}
+          postSlug={commentModalPost.slug}
+          postTitle={commentModalPost.title}
+        />
       )}
     </div>
   );
