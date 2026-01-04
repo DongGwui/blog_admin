@@ -4,3 +4,4 @@ export * from './ITagRepository';
 export * from './IMediaRepository';
 export * from './IProjectRepository';
 export * from './IAuthRepository';
+export * from './ICommentRepository';

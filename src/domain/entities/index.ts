@@ -4,3 +4,4 @@ export * from './Tag';
 export * from './Media';
 export * from './User';
 export * from './Project';
+export * from './Comment';

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Infrastructure
 import { ApiClient } from '@/infrastructure/api/ApiClient';
+import { GitHubGraphQLClient } from '@/infrastructure/api/GitHubGraphQLClient';
 import { TokenStorage } from '@/infrastructure/auth/TokenStorage';
 import { ApiAuthRepository } from '@/infrastructure/repositories/ApiAuthRepository';
 import { ApiPostRepository } from '@/infrastructure/repositories/ApiPostRepository';
@@ -12,6 +13,7 @@ import { ApiCategoryRepository } from '@/infrastructure/repositories/ApiCategory
 import { ApiTagRepository } from '@/infrastructure/repositories/ApiTagRepository';
 import { ApiMediaRepository } from '@/infrastructure/repositories/ApiMediaRepository';
 import { ApiProjectRepository } from '@/infrastructure/repositories/ApiProjectRepository';
+import { GitHubCommentRepository } from '@/infrastructure/repositories/GitHubCommentRepository';
 
 // Use Cases - Auth
 import { LoginUseCase } from '@/application/usecases/auth/LoginUseCase';
@@ -61,6 +63,14 @@ import {
   ReorderProjectsUseCase,
 } from '@/application/usecases/project';
 
+// Use Cases - Comment
+import {
+  GetCommentsUseCase,
+  DeleteCommentUseCase,
+  MinimizeCommentUseCase,
+  UnminimizeCommentUseCase,
+} from '@/application/usecases/comment';
+
 export interface Dependencies {
   // Infrastructure
   tokenStorage: TokenStorage;
@@ -102,6 +112,12 @@ export interface Dependencies {
   updateProjectUseCase: UpdateProjectUseCase;
   deleteProjectUseCase: DeleteProjectUseCase;
   reorderProjectsUseCase: ReorderProjectsUseCase;
+
+  // Comment Use Cases
+  getCommentsUseCase: GetCommentsUseCase;
+  deleteCommentUseCase: DeleteCommentUseCase;
+  minimizeCommentUseCase: MinimizeCommentUseCase;
+  unminimizeCommentUseCase: UnminimizeCommentUseCase;
 }
 
 const DependencyContext = createContext<Dependencies | null>(null);
@@ -143,6 +159,23 @@ export function DependencyProvider({ children }: DependencyProviderProps) {
     const mediaRepository = new ApiMediaRepository(apiClient);
     const projectRepository = new ApiProjectRepository(apiClient);
 
+    // GitHub Comment Repository (조건부 초기화)
+    const githubToken = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+    const githubOwner = process.env.NEXT_PUBLIC_GITHUB_REPO_OWNER;
+    const githubRepo = process.env.NEXT_PUBLIC_GITHUB_REPO_NAME;
+    const githubCategoryId = process.env.NEXT_PUBLIC_GITHUB_CATEGORY_ID;
+
+    let commentRepository: GitHubCommentRepository | null = null;
+    if (githubToken && githubOwner && githubRepo && githubCategoryId) {
+      const githubClient = new GitHubGraphQLClient({
+        token: githubToken,
+        owner: githubOwner,
+        repo: githubRepo,
+        categoryId: githubCategoryId,
+      });
+      commentRepository = new GitHubCommentRepository(githubClient);
+    }
+
     // Use Cases
     return {
       tokenStorage,
@@ -178,6 +211,19 @@ export function DependencyProvider({ children }: DependencyProviderProps) {
       updateProjectUseCase: new UpdateProjectUseCase(projectRepository),
       deleteProjectUseCase: new DeleteProjectUseCase(projectRepository),
       reorderProjectsUseCase: new ReorderProjectsUseCase(projectRepository),
+      // Comment (GitHub 설정이 없으면 더미 Use Case 제공)
+      getCommentsUseCase: commentRepository
+        ? new GetCommentsUseCase(commentRepository)
+        : createDummyGetCommentsUseCase(),
+      deleteCommentUseCase: commentRepository
+        ? new DeleteCommentUseCase(commentRepository)
+        : createDummyDeleteCommentUseCase(),
+      minimizeCommentUseCase: commentRepository
+        ? new MinimizeCommentUseCase(commentRepository)
+        : createDummyMinimizeCommentUseCase(),
+      unminimizeCommentUseCase: commentRepository
+        ? new UnminimizeCommentUseCase(commentRepository)
+        : createDummyUnminimizeCommentUseCase(),
     };
   }, []);
 
@@ -196,4 +242,40 @@ export function useDependencies(): Dependencies {
     throw new Error('useDependencies must be used within DependencyProvider');
   }
   return context;
+}
+
+// Dummy Use Cases (GitHub 설정이 없을 때 사용)
+function createDummyGetCommentsUseCase(): GetCommentsUseCase {
+  return {
+    execute: async () => ({
+      comments: [],
+      totalCount: 0,
+      hasNextPage: false,
+      endCursor: null,
+    }),
+  } as unknown as GetCommentsUseCase;
+}
+
+function createDummyDeleteCommentUseCase(): DeleteCommentUseCase {
+  return {
+    execute: async () => {
+      throw new Error('GitHub 설정이 필요합니다. 환경 변수를 확인해주세요.');
+    },
+  } as unknown as DeleteCommentUseCase;
+}
+
+function createDummyMinimizeCommentUseCase(): MinimizeCommentUseCase {
+  return {
+    execute: async () => {
+      throw new Error('GitHub 설정이 필요합니다. 환경 변수를 확인해주세요.');
+    },
+  } as unknown as MinimizeCommentUseCase;
+}
+
+function createDummyUnminimizeCommentUseCase(): UnminimizeCommentUseCase {
+  return {
+    execute: async () => {
+      throw new Error('GitHub 설정이 필요합니다. 환경 변수를 확인해주세요.');
+    },
+  } as unknown as UnminimizeCommentUseCase;
 }
